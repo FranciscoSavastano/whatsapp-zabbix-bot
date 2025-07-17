@@ -149,17 +149,17 @@ API_TOKEN=
 ### Alerta de Problema
 
 ```
-⚠️ ALERTA DO ZABBIX - 2 eventos para PCG ⚠️
+⚠️ ALERTA DO ZABBIX - 2 eventos para EXEMPLO1 ⚠️
 
 --- Evento 1 ---
-Host: EXAMPLE-SERVER-01
+Host: EXAMPLO1-SERVER-01
 Problema: High CPU utilization
 Horario: 15/03/2024 14:30:25
 Detalhes: CPU utilization is 95%
 Este alerta continua sem tratamento. Duração: 15m 30s
 
 --- Evento 2 ---
-Host: EXAMPLE-TOTEM-02
+Host: EXAMPLO1-TOTEM-02
 Problema: Network interface down
 Horario: 15/03/2024 14:25:10
 Detalhes: Interface eth0 is down
@@ -169,10 +169,10 @@ Este alerta continua sem tratamento. Duração: 20m 45s
 ### Alerta de Resolução
 
 ```
-✅ ALERTAS RESOLVIDOS - 1 eventos para PCG ✅
+✅ ALERTAS RESOLVIDOS - 1 eventos para EXEMPLO2 ✅
 
 --- Evento 1 ---
-Host: EXAMPLE-SERVER-01
+Host: EXAMPLO2-SERVER-01
 Problema: High CPU utilization
 Severidade: Alta
 Detalhes: CPU utilization is 95%
