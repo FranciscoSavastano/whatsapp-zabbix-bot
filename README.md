@@ -35,7 +35,7 @@ Siga os passos abaixo para configurar e executar o bot:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <url-do-repositorio>
+    git clone https://github.com/FranciscoSavastano/whatsapp-zabbix-bot
     cd whatsapp-zabbix-bot
     ```
 
