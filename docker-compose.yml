@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  whatsapp-zabbix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whatsapp-zabbix
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PUPPETEER_LAUNCH_ARGS='--no-sandbox,--disable-setuid-sandbox'
+      - TZ=America/Sao_Paulo
+    volumes:
+      - auth-data:/app/Auth
+      - /etc/localtime:/etc/localtime:ro  # Mapeia o fuso horário do host
+    restart: unless-stopped
+
+volumes:
+  auth-data:
