@@ -2,53 +2,92 @@ import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import axios from 'axios';
-// Forçar o timezone para América/Sao_Paulo
-process.env.TZ = 'America/Sao_Paulo';
+import fs from 'fs';
+
+// Função para ler arquivo de configuração
+function readConfigFile(configPath = './config.cfg') {
+  try {
+    const configData = fs.readFileSync(configPath, 'utf8');
+    const config = {};
+    let currentSection = null;
+
+    configData.split('\n').forEach(line => {
+      line = line.trim();
+
+      // Ignorar comentários e linhas vazias
+      if (line.startsWith('#') || line === '') return;
+
+      // Verificar se é uma seção
+      if (line.startsWith('[') && line.endsWith(']')) {
+        currentSection = line.slice(1, -1);
+        config[currentSection] = {};
+        return;
+      }
+
+      // Processar pares chave=valor
+      if (currentSection && line.includes('=')) {
+        const [key, ...valueParts] = line.split('=');
+        const value = valueParts.join('=').trim();
+
+        if (currentSection === 'ALLOWED_HOSTS' && key === 'HOSTS') {
+          // Tratar ALLOWED_HOSTS como array
+          config[currentSection][key] = value ? value.split(',').map(item => item.trim()) : [];
+        } else if (currentSection === 'ALLOWED_HOSTS_CONTRACTS' && key === 'CONTRACTS') {
+          // Tratar ALLOWED_HOSTS_CONTRACTS como array
+          config[currentSection][key] = value ? value.split(',').map(item => item.trim()) : [];
+        } else if (currentSection === 'CONTRACT_GROUPS') {
+          // Tratar CONTRACT_GROUPS como objeto
+          config[currentSection][key] = value;
+        } else if (currentSection === 'BLOCKED_HOSTS') {
+          // Tratar BLOCKED_HOSTS como objeto
+          config[currentSection][key] = value;
+        } else {
+          config[currentSection][key] = value;
+        }
+      }
+    });
+
+    return config;
+  } catch (error) {
+    console.error('Erro ao ler arquivo de configuração:', error);
+    process.exit(1);
+  }
+}
+
+// Carregar configurações
+const config = readConfigFile();
+
+// Aplicar configurações do sistema
+process.env.TZ = config.GENERAL.TIMEZONE;
 console.log(`Data e hora do sistema com TZ forçado: ${new Date().toString()}`);
 console.log(`Timezone offset: ${new Date().getTimezoneOffset() / -60} horas`);
 
 // Configuração da API Zabbix
-const ZABBIX_API = 'http://192.168.10.250/zabbix/api_jsonrpc.php';
-const API_TOKEN = '69c9dfb198111052604ae3ffd1d91df9e9bd133ab2f0a5ad4efa9635e7ce13fa'; //CHAVE DE API
+const ZABBIX_API = config.ZABBIX.API_URL;
+const API_TOKEN = config.ZABBIX.API_TOKEN;
 
-// Configuração de severidade - apenas severidade 4 (Alta) ou superior
-const MIN_SEVERITY = 4;
+// Configuração de severidade
+const MIN_SEVERITY = parseInt(config.GENERAL.MIN_SEVERITY);
 
 // Mapeamento de contratos para IDs de grupos do WhatsApp
+const CONTRACT_GROUPS = config.CONTRACT_GROUPS;
 
-const CONTRACT_GROUPS = {
-  'PCG': '', //Aqui coloque o ID do grupo do WhatsApp para o contratos
-  'UFV': '',
-  'BRS' : '',
-  'PKJ' : '',
-  'SVO' : '',
-  'MBS' : '',
-  'RBS' : '',
-};
-const ALLOWED_HOSTS = [
-  'TOTEM',
-  'TOT',
-  'OCR1',
-  //'CAIXA', //Retire isso em produção, proposito de teste
-  'OCR2'
-]
+// Hosts permitidos
+const ALLOWED_HOSTS = config.ALLOWED_HOSTS.HOSTS;
 
-const BLOCKED_HOSTS = {
-  'RSUL' : 'WS'
-}
+// Hosts bloqueados
+const BLOCKED_HOSTS = config.BLOCKED_HOSTS;
 
-const ALLOWED_HOSTS_CONTRACTS = [
-  //'MBS',
-  //'RBS',
-  //'BRS',
-  //'PCG',
-  //'PKJ',
-  //'SVO',
-  //'UFV'
-]
-const grupoPadrao = ''
+// Contratos com hosts permitidos
+const ALLOWED_HOSTS_CONTRACTS = config.ALLOWED_HOSTS_CONTRACTS.CONTRACTS;
+
+// Grupo padrão
+const grupoPadrao = config.GENERAL.DEFAULT_GROUP_ID;
+
 let isAllowed = true;
 let isResolutionAllowed = true;
+
+
 // Cache de eventos já notificados para evitar duplicações
 const notifiedEvents = new Map();
 // Cache de eventos que aguardam confirmação (para re-verificação após 10 min)
