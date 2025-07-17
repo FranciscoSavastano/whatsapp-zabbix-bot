@@ -1,6 +1,8 @@
 # Logs and databases
 .wwebjs_cache
 Auth
+#IDE
+.idea
 # Logs
 logs
 *.log
