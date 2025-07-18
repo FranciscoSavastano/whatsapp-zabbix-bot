@@ -8,8 +8,7 @@ ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN npm install
-# Install the necessary dependencies for your application
-# Install xvfb, xauth, NSS, and the necessary graphics libraries including libgbm
+# Instale as dependencia,IMPORTANTE: puppeter tem dificuldades em executas sem estas.
 RUN apt-get update && apt-get install -yq \
     libgconf-2-4 \
     libatk1.0-0 \
@@ -36,5 +35,5 @@ COPY . .
 
 EXPOSE 3000
 
-# Run xvfb in the background and then start your Node.js application
+# Ultilize xvfb para executar em modo headless
 CMD ["sh", "-c", "xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' node index.js"]
