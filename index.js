@@ -265,7 +265,8 @@ async function checkAndNotifyEvents(client) {
       continue; // Pular este evento
     }
     // Verificar se o host é permitido para o contrato
-    if (ALLOWED_HOSTS_CONTRACTS.includes(contract)) {
+
+    if (ALLOWED_HOSTS_CONTRACTS && ALLOWED_HOSTS_CONTRACTS.includes(contract)) {
       const allowedHost = event.hosts[0].name
       const treatedAllowedHost = allowedHost.replace(/\s+/g, '-').toUpperCase();
       const hostParts = treatedAllowedHost.split('-');
@@ -342,7 +343,6 @@ async function checkAndNotifyEvents(client) {
   
   // Enviar eventos agrupados para o grupo padrão, separados por contrato
   if (defaultGroupEventsByContract.size > 0) {
-    //const defaultGroupChat = await client.getChatById('120363418105656991@g.us'); // Grupo de teste
     const defaultGroupChat = await client.getChatById(grupoPadrao); // Grupo padrão
     
     for (const [contract, events] of defaultGroupEventsByContract.entries()) {
@@ -524,7 +524,6 @@ async function checkResolvedEvents(client) {
   
   // Send events to the default group
   if (defaultResolvedEventsByContract.size > 0) {
-    //const defaultGroupChat = await client.getChatById('120363418105656991@g.us'); // Grupo de teste
     const defaultGroupChat = await client.getChatById(grupoPadrao); // Grupo do Padrão
     for (const [contract, events] of defaultResolvedEventsByContract.entries()) {
       try {
@@ -678,10 +677,11 @@ function cleanupOldEvents() {
     setTimeout(() => checkAndNotifyEvents(client), 5000);
     
     // Configurar verificações periódicas
-    setInterval(() => checkAndNotifyEvents(client), 1 * 60 * 1000); // A cada 1 minutos
+    // Tenha cuidado com a frequência para não sobrecarregar o Zabbix
+    setInterval(() => checkAndNotifyEvents(client), 1 * 60 * 1000); // A cada 1 minuto
     
     // Adicionar verificação de eventos resolvidos
-    setInterval(() => checkResolvedEvents(client), 1 * 60 * 1000); // A cada 1 minutos
+    setInterval(() => checkResolvedEvents(client), 1 * 60 * 1000); // A cada 1 minuto
     
     // Configurar limpeza periódica do cache
     setInterval(cleanupOldEvents, 6 * 60 * 60 * 1000); // A cada 6 horas
@@ -743,15 +743,23 @@ if (message.body === '@grupo') {
       responseMessage = `Este não é um grupo. Este comando funciona apenas em grupos.`;
     }
 
-    // Enviar a mensagem para o grupo específico
-    const targetGroupId = '120363039144140742@g.us';
-    const targetGroupChat = await client.getChatById(targetGroupId);
-    await targetGroupChat.sendMessage(responseMessage);
+    // Enviar a mensagem para o grupo específico - Evitar caso onde resposta seja enviada para o remetente, causando crash
+    if(grupoPadrao) {
+      const targetGroupId = grupoPadrao; // ID do grupo padrão
+      const targetGroupChat = await client.getChatById(targetGroupId);
+      await targetGroupChat.sendMessage(responseMessage);
+      console.log(`Mensagem enviada para o grupo ${targetGroupId}: ${responseMessage}`);
+    }else {
+      console.log(responseMessage );
+    }
 
-    console.log(`Mensagem enviada para o grupo ${targetGroupId}: ${responseMessage}`);
   } catch (error) {
     console.error("Erro ao processar o comando:", error);
-    await message.reply("Erro ao processar o comando. Verifique o console para detalhes.");
+    try {
+      await message.reply("Erro ao processar o comando. Verifique o console para detalhes.");
+    }catch  (replyError) {
+        console.error("Erro ao enviar mensagem de erro:", replyError);
+    }
   }
 }
     // Comando para listar todos os eventos (incluindo severidades menores)
