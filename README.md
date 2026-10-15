@@ -1,12 +1,12 @@
 
 
-# 🤖 WhatsApp-Zabbix Bot
+#  WhatsApp-Zabbix Bot
 
 Um bot de monitoramento que integra o Zabbix com o WhatsApp para o envio automático de alertas de alta severidade. O bot permite configuração flexível via arquivo e envia alertas para grupos específicos por contrato ou para um grupo padrão.
 
 ---
 
-## 🌟 Características
+##  Características
 
 * **Monitoramento Automático:** Acompanha eventos Zabbix não tratados.
 * **Filtragem por Severidade:** Filtra alertas por severidade (Alta e Crítica por padrão).
@@ -18,7 +18,7 @@ Um bot de monitoramento que integra o Zabbix com o WhatsApp para o envio automá
 
 ---
 
-## 📋 Pré-requisitos
+##  Pré-requisitos
 
 Para rodar o bot, você precisará de:
 
@@ -29,7 +29,7 @@ Para rodar o bot, você precisará de:
 
 ---
 
-## 🚀 Instalação
+## Instalação
 
 Siga os passos abaixo para configurar e executar o bot:
 
@@ -53,7 +53,7 @@ Siga os passos abaixo para configurar e executar o bot:
 
 ---
 
-## ⚙️ Configuração
+## Configuração
 
 Crie um arquivo `config.cfg` na raiz do projeto com as seguintes configurações:
 
@@ -111,7 +111,7 @@ API_TOKEN=
 
 -----
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 ### Monitoramento Automático
 
@@ -144,7 +144,7 @@ API_TOKEN=
 
 -----
 
-## 📢 Estrutura de Alertas
+## Estrutura de Alertas
 
 ### Alerta de Problema
 
@@ -181,7 +181,7 @@ Este alerta foi resolvido após 25m 15s.
 
 -----
 
-## 🪵 Logs e Monitoramento
+## Logs e Monitoramento
 
 O bot gera logs detalhados para:
 
@@ -192,7 +192,7 @@ O bot gera logs detalhados para:
 
 -----
 
-## 📦 Containerização
+## Containerização
 
 O bot inclui configurações para execução em containers, otimizando o `puppeteer` para ambientes `headless`:
 
@@ -213,7 +213,7 @@ puppeteer: {
 
 -----
 
-## 🧩 Dependências
+## Dependências
 
 As principais dependências utilizadas pelo bot são:
 
@@ -224,7 +224,7 @@ As principais dependências utilizadas pelo bot são:
 
 -----
 
-## 🔒 Segurança
+## Segurança
 
 * Tokens de API devem ser mantidos seguros no arquivo de configuração.
 * O arquivo `config.cfg` **não deve ser commitado** no repositório.
@@ -232,7 +232,7 @@ As principais dependências utilizadas pelo bot são:
 
 -----
 
-## ⚠️ Troubleshooting
+## Troubleshooting
 
 ### Bot não conecta ao WhatsApp
 
@@ -254,7 +254,7 @@ As principais dependências utilizadas pelo bot são:
 
 -----
 
-## 🤝 Contribuição
+## Contribuição
 
 Sinta-se à vontade para contribuir com este projeto\!
 
@@ -266,6 +266,6 @@ Sinta-se à vontade para contribuir com este projeto\!
 
 -----
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob licença MIT. Veja o arquivo `LICENSE` para detalhes.
